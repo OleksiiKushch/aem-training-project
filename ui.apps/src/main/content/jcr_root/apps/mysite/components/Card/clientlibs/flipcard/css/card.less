@@ -1,0 +1,72 @@
+.flip-card-container {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 1em;
+  height: 300px;
+  width: 275px;
+  perspective: 1000px;
+
+  .card-img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .flip-img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 25px;
+    height: 25px;
+    margin: .7em;
+    filter: ~"invert(75%) sepia(26%) saturate(1%) hue-rotate(358deg) brightness(95%) contrast(94%)";
+    transition: 0.3s;
+  }
+
+  &:hover {
+    .flip-img {
+      filter: ~"invert(49%) sepia(2%) saturate(68%) hue-rotate(315deg) brightness(90%) contrast(71%)";
+    }
+  }
+}
+
+.flip-card {
+  position: relative;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+
+  &.is-flipped {
+    transform: rotateY(180deg);
+  }
+
+  &-front, &-back {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F3F3F3;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    }
+  }
+
+  &-back {
+    color: rgb(128, 128, 128);
+    transform: rotateY(180deg);
+
+    h3 {
+      font-style: italic;
+      margin-left: 1em;
+      margin-right: 1em;
+    }
+  }
+}
