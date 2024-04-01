@@ -347,6 +347,25 @@
                     <jcr:content jcr:primaryType="nt:unstructured"/>
                 </policy>
             </page>
+            <Card jcr:primaryType="nt:unstructured">
+                <policy_1711835941684 jcr:description="Some Card style options: Grey Image, Mirror Image (image styles can be combined), Heading Left and Right alignments (cannot be combined)." jcr:lastModified="{Date}2024-03-31T00:50:48.179+02:00" jcr:lastModifiedBy="admin" jcr:primaryType="nt:unstructured" jcr:title="Card Styles" sling:resourceType="wcm/core/components/policy/policy" disableLazyLoading="false" displayPopupTitle="true" isDecorative="false" titleValueFromDAM="true">
+                    <jcr:content jcr:primaryType="nt:unstructured"/>
+                    <cq:styleGroups jcr:primaryType="nt:unstructured">
+                        <item0 cq:styleGroupLabel="Image" cq:styleGroupMultiple="true" jcr:primaryType="nt:unstructured">
+                            <cq:styles jcr:primaryType="nt:unstructured">
+                                <item0 cq:styleClasses="card-gray-img" cq:styleId="1711836076634" cq:styleLabel="Gray Image" jcr:primaryType="nt:unstructured"/>
+                                <item1 cq:styleClasses="card-mirror-img" cq:styleId="1711837112907" cq:styleLabel="Mirror Image" jcr:primaryType="nt:unstructured"/>
+                            </cq:styles>
+                        </item0>
+                        <item1 cq:styleGroupLabel="Heading" jcr:primaryType="nt:unstructured">
+                            <cq:styles jcr:primaryType="nt:unstructured">
+                                <item0 cq:styleClasses="card-left-aligned-heading" cq:styleId="1711838114101" cq:styleLabel="Left Heading" jcr:primaryType="nt:unstructured"/>
+                                <item1 cq:styleClasses="card-right-aligned-heading" cq:styleId="1711838170951" cq:styleLabel="Right Heading" jcr:primaryType="nt:unstructured"/>
+                            </cq:styles>
+                        </item1>
+                    </cq:styleGroups>
+                </policy_1711835941684>
+            </Card>
         </components>
     </mysite>
     <wcm jcr:primaryType="nt:unstructured">
