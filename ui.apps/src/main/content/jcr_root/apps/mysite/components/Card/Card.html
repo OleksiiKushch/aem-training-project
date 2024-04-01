@@ -32,20 +32,33 @@
        class="cmp-image__link"
        data-sly-attribute="${image.imageLink.htmlAttributes}"
        data-cmp-clickable="${image.data ? true : false}">
-        <img src="${image.src}"
-             srcset="${image.srcset}"
-             loading="${image.lazyEnabled ? 'lazy' : ''}"
-             class="cmp-image__image"
-             itemprop="contentUrl"
-             width="${image.width}" height="${image.height}"
-             sizes="${image.sizes}"
-             alt="${image.alt || true}" title="${image.displayPopupTitle && image.title}"/>
-    </a>
-    <span class="cmp-image__title" itemprop="caption" data-sly-test="${!image.displayPopupTitle && image.title}">${image.title}</span>
-    <meta itemprop="caption" content="${image.title}" data-sly-test="${image.displayPopupTitle && image.title}">
 
-	<h2>${properties.heading @ context='text'}</h2>
-    <h3>${properties.description @ context='text'}</h3>
+        <div class="flip-card-container">
+            <div class="flip-card">
+                <div class="flip-card-front">
+                    <div class="card-content">
+                        <img src="${image.src}"
+                             srcset="${image.srcset}"
+                             loading="${image.lazyEnabled ? 'lazy' : ''}"
+                             class="cmp-image__image card-img"
+                             itemprop="contentUrl"
+                             width="${image.width}" height="${image.height}"
+                             sizes="${image.sizes}"
+                             alt="${image.alt || true}" title="${image.displayPopupTitle && image.title}"/>
+                        <img class="flip-img" src="/apps/mysite/components/Card/clientlibs/flipcard/resources/flip.svg" alt="flip icon">
+                        <h1>${properties.heading @ context='text'}</h1>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <img class="flip-img" src="/apps/mysite/components/Card/clientlibs/flipcard/resources/flip.svg" alt="flip icon">
+                    <h3>
+                        ${properties.description ? properties.description : 'No Description' @ context='text'}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+    </a>
 
 </div>
 <sly data-sly-call="${templates.placeholder @ isEmpty = !image.src, classAppend = 'cmp-image cq-dd-image'}"></sly>
