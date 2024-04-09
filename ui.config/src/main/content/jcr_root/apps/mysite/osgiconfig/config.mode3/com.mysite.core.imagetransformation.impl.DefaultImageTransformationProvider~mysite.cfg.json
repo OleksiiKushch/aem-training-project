@@ -1,0 +1,6 @@
+{
+  "transformations": [
+    "grayscale",
+    "upside-down"
+  ]
+}
