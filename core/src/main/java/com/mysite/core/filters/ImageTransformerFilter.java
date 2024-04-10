@@ -12,7 +12,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import javax.jcr.RepositoryException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,7 +30,8 @@ public class ImageTransformerFilter implements Filter {
 
     private static final String PROCESS_IMAGE_LOG_MSG = "Process the image with the file reference: {}";
 
-    private static final String AFTER_TRANSFORM_FORMAT = "png";
+    private static final String MIME_TYPE_PREFIX = "image/";
+    private static final double MAX_QUALITY = 1.0d;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -43,21 +43,32 @@ public class ImageTransformerFilter implements Filter {
             throws IOException, ServletException {
         SlingHttpServletRequest request = (SlingHttpServletRequest) servletRequest;
 
-        Image image = new Image(request.getResource());
+        Image image = getImage(request);
         log.debug(PROCESS_IMAGE_LOG_MSG, image.getFileReference());
-        Layer layer;
-        try {
-            layer = image.getLayer(true, true, true);
-            getImageTransformationProvider().getTransformer()
-                    .applyTransformation(layer);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
+        Layer layer = getLayer(image);
+        getImageTransformationProvider().getTransformer()
+                .applyTransformation(layer);
 
-        ImageIO.write(layer.getImage(), AFTER_TRANSFORM_FORMAT, servletResponse.getOutputStream());
+        layer.write(getMimeType(request), MAX_QUALITY, servletResponse.getOutputStream());
 
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    protected Image getImage(SlingHttpServletRequest request) {
+        return new Image(request.getResource());
+    }
+
+    private Layer getLayer(Image image) {
+        try {
+            return image.getLayer(true, true, true);
+        } catch (RepositoryException | IOException exception) {
+            log.error(exception.getMessage());
+            throw new RuntimeException(exception);
+        }
+    }
+
+    private String getMimeType(SlingHttpServletRequest request) {
+        return MIME_TYPE_PREFIX + request.getRequestPathInfo().getExtension();
     }
 
     @Override

@@ -8,8 +8,6 @@ import com.mysite.core.imagetransformation.transformer.ImageTransformer;
  */
 public class GrayscaleImageTransformer implements ImageTransformer {
 
-    public static final String TRANSFORMATION_NAME = "grayscale";
-
     @Override
     public Layer transform(Layer layer) {
         layer.grayscale();

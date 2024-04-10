@@ -13,18 +13,26 @@ public class ImageTransformerChain {
         this.transformers = transformers;
     }
 
+    public static ImageTransformerChainBuilder builder() {
+        return new ImageTransformerChainBuilder();
+    }
+
     public Layer applyTransformation(Layer layer) {
-        for (ImageTransformer transformer : transformers) {
+        for (ImageTransformer transformer : getTransformers()) {
             layer = transformer.transform(layer);
         }
         return layer;
+    }
+
+    public List<ImageTransformer> getTransformers() {
+        return transformers;
     }
 
     public static class ImageTransformerChainBuilder {
 
         private final List<ImageTransformer> transformers;
 
-        public ImageTransformerChainBuilder() {
+        private ImageTransformerChainBuilder() {
             transformers = new ArrayList<>();
         }
 

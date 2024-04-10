@@ -1,5 +1,6 @@
 package com.mysite.core.imagetransformation.impl;
 
+import com.mysite.core.imagetransformation.transformer.ImageTransformerType;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
@@ -7,5 +8,5 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 public @interface DefaultImageTransformationProviderConfig {
 
     @AttributeDefinition(name = "Transformations")
-    String[] transformations() default {};
+    ImageTransformerType[] transformations() default {};
 }
