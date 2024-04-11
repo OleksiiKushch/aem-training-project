@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @Component(service = Filter.class)
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
@@ -44,12 +45,15 @@ public class ImageTransformerFilter implements Filter {
         SlingHttpServletRequest request = (SlingHttpServletRequest) servletRequest;
 
         Image image = getImage(request);
-        log.debug(PROCESS_IMAGE_LOG_MSG, image.getFileReference());
         Layer layer = getLayer(image);
-        getImageTransformationProvider().getTransformer()
-                .applyTransformation(layer);
 
-        layer.write(getMimeType(request), MAX_QUALITY, servletResponse.getOutputStream());
+        if (Objects.nonNull(layer)) {
+            log.debug(PROCESS_IMAGE_LOG_MSG, image.getFileReference());
+            getImageTransformationProvider().getTransformer()
+                    .applyTransformation(layer);
+
+            layer.write(getMimeType(request), MAX_QUALITY, servletResponse.getOutputStream());
+        }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }

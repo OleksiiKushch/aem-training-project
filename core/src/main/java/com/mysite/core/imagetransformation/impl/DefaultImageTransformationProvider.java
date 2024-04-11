@@ -26,7 +26,7 @@ public class DefaultImageTransformationProvider implements ImageTransformationPr
     }
 
     private ImageTransformerChain formTransformer() {
-        var builder = ImageTransformerChain.builder();
+        ImageTransformerChain.ImageTransformerChainBuilder builder = ImageTransformerChain.builder();
         for(ImageTransformerType transformation : getTransformationNames()) {
             switch(transformation) {
                 case GREYSCALE:

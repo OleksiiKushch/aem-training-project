@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,6 +80,19 @@ class ImageTransformerFilterTest {
         testInstance.doFilter(request, response, filterChain);
 
         verify(imageTransformerChain).applyTransformation(layer);
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void shouldNotTransformImage_when() throws ServletException, IOException, RepositoryException {
+        when(image.getLayer(true, true, true)).thenReturn(null);
+
+        testInstance.doFilter(request, response, filterChain);
+
+        verify(imageTransformationProvider, never()).getTransformer();
+        verify(request, never()).getRequestPathInfo();
+        verify(requestPathInfo, never()).getExtension();
+        verify(response, never()).getOutputStream();
         verify(filterChain).doFilter(request, response);
     }
 
