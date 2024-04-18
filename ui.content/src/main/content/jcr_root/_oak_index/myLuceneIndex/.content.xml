@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:mixinTypes="[rep:AccessControllable]"
+          jcr:primaryType="oak:QueryIndexDefinition"
+          info="My custom Lucene index"
+          indexPath="/oak:index/myLuceneIndex"
+          async="[async,nrt]"
+          compatVersion="{Long}2"
+          evaluatePathRestrictions="{Boolean}true"
+          excludedPaths="[/var,/etc/replication,/etc/workflow/instances,/jcr:system]"
+          includedPaths="[/content]"
+          queryPaths="[/content]"
+          maxFieldLength="{Long}100000"
+          reindex="{Boolean}false"
+          type="lucene">
+    <facets jcr:primaryType="nt:unstructured"
+            secure="statistical"
+            topChildren="100">
+    </facets>
+    <indexRules jcr:primaryType="nt:unstructured">
+        <nt:base jcr:primaryType="nt:unstructured">
+            <properties jcr:primaryType="nt:unstructured">
+                <myCustomProperty jcr:primaryType="nt:unstructured"
+                        name="myCustomProperty"
+                        analyzed="{Boolean}true"
+                        nodeScopeIndex="{Boolean}true"
+                        propertyIndex="{Boolean}true"
+                        useInSpellcheck="{Boolean}true"
+                        useInSuggest="{Boolean}true"/>
+            </properties>
+        </nt:base>
+    </indexRules>
+    <tika jcr:primaryType="nt:unstructured">
+        <config.xml/>
+    </tika>
+</jcr:root>
