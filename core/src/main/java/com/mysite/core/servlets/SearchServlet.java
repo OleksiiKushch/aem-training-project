@@ -8,8 +8,8 @@ import com.mysite.core.search.TextSearchServiceFactory;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.servlets.annotations.SlingServletPaths;
+import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osgi.service.component.annotations.Component;
@@ -17,6 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Session;
 import javax.servlet.Servlet;
 import java.io.IOException;
 import java.util.Optional;
@@ -24,12 +25,12 @@ import java.util.Optional;
 import static org.eclipse.jetty.http.MimeTypes.Type.APPLICATION_JSON;
 
 @Component(service = Servlet.class)
-@SlingServletPaths(
-        value = "/bin/search"
+@SlingServletResourceTypes(
+        resourceTypes = "mysite/components/textsearch",
+        methods = org.apache.sling.api.servlets.HttpConstants.METHOD_GET
 )
-public class SearchServlet extends SlingAllMethodsServlet {
+public class SearchServlet extends SlingSafeMethodsServlet {
 
-    private static final String RESOURCE_PATH_PARAM = "resourcePath";
     private static final String ERROR_PARAM = "error";
 
     private static final String ERROR_MSG = "Resource not found or failed to adapt to model at path: ";
@@ -41,14 +42,14 @@ public class SearchServlet extends SlingAllMethodsServlet {
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
-        String resourcePath = request.getParameter(RESOURCE_PATH_PARAM);
-
         ResourceResolver resourceResolver = request.getResourceResolver();
 
+        String resourcePath = request.getResource().getPath();
         String result = Optional.ofNullable(resourceResolver.getResource(resourcePath))
                 .map(resource -> resource.adaptTo(TextSearch.class))
                 .map(searchModel -> getTextSearchServiceFactory().getTextSearch(searchModel.getSearchStrategy())
-                        .doSearch(searchModel.getSearchedText(), searchModel.getSearchPaths()))
+                        .doSearch(searchModel.getSearchedText(), searchModel.getSearchPaths(),
+                                resourceResolver.adaptTo(Session.class)))
                 .map(this::mapToJsonString)
                 .orElseGet(() -> createErrorObject(resourcePath));
 

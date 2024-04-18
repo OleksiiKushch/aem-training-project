@@ -5,13 +5,13 @@ import com.mysite.core.models.TextSearchResult;
 import com.mysite.core.models.impl.TextSearchResultImpl;
 import com.mysite.core.search.TextSearchService;
 import org.apache.commons.lang.StringUtils;
-import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -29,18 +29,16 @@ public class QueryManagerTextSearchService implements TextSearchService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Reference
-    private SlingRepository slingRepository;
     @Reference(target = "(component.name=com.mysite.core.mapper.impl.QueryResultToTextSearchResultMapper)")
     private Mapper<QueryResult, TextSearchResult> mapper;
 
     @Override
-    public TextSearchResult doSearch(String text, List<String> paths) {
+    public TextSearchResult doSearch(String text, List<String> paths, Session session) {
         if (StringUtils.isEmpty(text)) {
             return new TextSearchResultImpl();
         }
 
-        Query query = createQuery(getQueryManager(), formSql2Query(text, paths));
+        Query query = createQuery(getQueryManager(session), formSql2Query(text, paths));
 
         TextSearchResult result = getMapper().map(executeQuery(query));
 
@@ -50,9 +48,9 @@ public class QueryManagerTextSearchService implements TextSearchService {
         return result;
     }
 
-    private QueryManager getQueryManager() {
+    private QueryManager getQueryManager(Session session) {
         try {
-            return getSession(getSlingRepository(), log).getWorkspace().getQueryManager();
+            return session.getWorkspace().getQueryManager();
         } catch (RepositoryException exception) {
             log.error(exception.getMessage());
             throw new RuntimeException(exception);
@@ -97,10 +95,6 @@ public class QueryManagerTextSearchService implements TextSearchService {
             throw new RuntimeException(exception);
         }
         return result;
-    }
-
-    public SlingRepository getSlingRepository() {
-        return slingRepository;
     }
 
     public Mapper<QueryResult, TextSearchResult> getMapper() {

@@ -9,12 +9,10 @@ import com.mysite.core.models.TextSearchResult;
 import com.mysite.core.models.impl.TextSearchResultImpl;
 import com.mysite.core.search.TextSearchService;
 import org.apache.commons.lang.StringUtils;
-import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import javax.jcr.Session;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,22 +28,18 @@ public class QueryBuilderTextSearchService implements TextSearchService {
     private static final String PATH_PROPERTY = "path";
     private static final String GROUP_PATH_PROPERTY_PATTERN = "group.%d_%s";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
     @Reference
     private QueryBuilder builder;
-    @Reference
-    private SlingRepository slingRepository;
     @Reference(target = "(component.name=com.mysite.core.mapper.impl.SearchResultToTextSearchResultMapper)")
     private Mapper<SearchResult, TextSearchResult> mapper;
 
     @Override
-    public TextSearchResult doSearch(String text, List<String> paths) {
+    public TextSearchResult doSearch(String text, List<String> paths, Session session) {
         if (StringUtils.isEmpty(text)) {
             return new TextSearchResultImpl();
         }
 
-        Query query = getBuilder().createQuery(getPredicateGroup(text, paths), getSession(getSlingRepository(), log));
+        Query query = getBuilder().createQuery(getPredicateGroup(text, paths), session);
 
         TextSearchResult result = getMapper().map(query.getResult());
 
@@ -71,10 +65,6 @@ public class QueryBuilderTextSearchService implements TextSearchService {
 
     public QueryBuilder getBuilder() {
         return builder;
-    }
-
-    public SlingRepository getSlingRepository() {
-        return slingRepository;
     }
 
     public Mapper<SearchResult, TextSearchResult> getMapper() {

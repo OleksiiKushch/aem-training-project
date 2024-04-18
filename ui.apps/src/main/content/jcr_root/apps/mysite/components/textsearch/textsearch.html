@@ -5,11 +5,8 @@
     $(document).ready(function() {
         $("#${textSearch.id @ context='text'}").click(function(){
             $.ajax({
-                url: '/bin/search',
+                url: "${resource.path @ context='unsafe'}",
                 type: 'GET',
-                data: {
-                    "resourcePath": "${resource.path @ context='unsafe'}"
-                },
                 success: function(response) {
                     console.log(response);
                 }
