@@ -2,8 +2,13 @@
     "scripts": [
         "create path (sling:OrderedFolder) /content/dam/mysite",
         "create path (nt:unstructured) /content/dam/mysite/jcr:content",
+        "create path (sling:Folder) /var/log",
+        "create path (sling:Folder) /var/log/removedProperties",
         "set properties on /content/dam/mysite/jcr:content\n  set cq:conf{String} to /conf/mysite\n  set jcr:title{String} to \"My Site\"\nend",
         "create service user mysite-auto-versioning-service-user with path system",
-        "set ACL for mysite-auto-versioning-service-user\n\tallow jcr:read,jcr:write,jcr:lockManagement,jcr:versionManagement,jcr:nodeTypeManagement,jcr:retentionManagement,jcr:lifecycleManagement on /content/mysite\nend"
+        "set ACL for mysite-auto-versioning-service-user\n\tallow jcr:read,jcr:write,jcr:lockManagement,jcr:versionManagement,jcr:nodeTypeManagement,jcr:retentionManagement,jcr:lifecycleManagement on /content/mysite\nend",
+        "create service user mysite-remove-property-listener-service-user with path system",
+        "set ACL for mysite-remove-property-listener-service-user\n\tallow jcr:read on /content/mysite\nend",
+        "set ACL for mysite-remove-property-listener-service-user\n\tallow jcr:read,jcr:write,jcr:nodeTypeManagement on /var/log/removedProperties\nend"
     ]
 }

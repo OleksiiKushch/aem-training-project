@@ -1,0 +1,9 @@
+{
+  "aces": [
+    "type=allow;privileges=jcr:read;path=/content/mysite",
+    "type=allow;privileges=jcr:read,jcr:write,jcr:nodeTypeManagement;path=/var/log/removedProperties"
+  ],
+  "ensure-immediately": "{Boolean}true",
+  "principalName": "mysite/mysite-remove-property-listener-service-user",
+  "type": "add"
+}

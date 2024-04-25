@@ -1,0 +1,6 @@
+{
+  "user.mapping": [
+    "mysite.core:mysiteautoversioningserviceuser=mysite-auto-versioning-service-user",
+    "mysite.core:mysiteremovepropertylistenerserviceuser=mysite-remove-property-listener-service-user"
+  ]
+}
