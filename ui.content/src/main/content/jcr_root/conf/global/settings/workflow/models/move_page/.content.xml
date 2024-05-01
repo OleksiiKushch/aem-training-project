@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:designPath="/libs/settings/wcm/designs/default"
+        cq:template="/libs/cq/workflow/templates/model"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Move page"
+        sling:resourceType="cq/workflow/components/pages/model">
+        <flow
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="foundation/components/parsys">
+            <or
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Check if &quot;pathToMove&quot; property (path) is present"
+                sling:resourceType="cq/workflow/components/model/or"
+                branches="2"
+                branchName1="&quot;pathToMove&quot; property (path) is present"
+                branchName2="&quot;pathToMove&quot; property (path) is NOT present"
+                branchOrder="[0,1]"
+                orSplit="true"
+                script1="function check() {&#xd;&#xa;    let pageContentNodePath = workflowData.getPayload() + &quot;/jcr:content&quot;;&#xd;&#xa;    if (!jcrSession.nodeExists(pageContentNodePath)) {&#xd;&#xa;        log.info(&quot;jcr:content node does not exists&quot;);&#xd;&#xa;        return false;&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    let pageContent = jcrSession.getNode(pageContentNodePath);&#xd;&#xa;    if (!pageContent.hasProperty(&quot;pathToMove&quot;)) {&#xd;&#xa;        log.info(&quot;pathToMove is NOT present&quot;);&#xd;&#xa;        return true;&#xd;&#xa;    }&#xd;&#xa;    return false;&#xd;&#xa;}"
+                script2="function check() {&#xd;&#xa;    let pageContentNodePath = workflowData.getPayload() + &quot;/jcr:content&quot;;&#xd;&#xa;    if (!jcrSession.nodeExists(pageContentNodePath)) {&#xd;&#xa;        log.info(&quot;jcr:content node does not exists&quot;);&#xd;&#xa;        return false;&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    let pageContent = jcrSession.getNode(pageContentNodePath);&#xd;&#xa;    return pageContent.hasProperty(&quot;pathToMove&quot;);&#xd;&#xa;}">
+                <_x0031_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <dialog
+                        jcr:description="A participant step that is using a dialog for set &quot;pathToMove &quot; property for payload (page)."
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Set &quot;pathToMove &quot; property dialog participant"
+                        sling:resourceType="cq/workflow/components/model/dialog">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            DIALOG_PATH="/conf/global/settings/workflow/models/move_page/cq:dialog"
+                            PARTICIPANT="administrators"
+                            timeoutMillis="1"/>
+                    </dialog>
+                </_x0031_>
+                <_x0032_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <noopprocess
+                        jcr:description="A no operation process"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="No Operation"
+                        sling:resourceType="cq/workflow/components/workflow/noopprocess">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            PROCESS="/libs/workflow/scripts/noop.ecma"
+                            PROCESS_AUTO_ADVANCE="true"/>
+                    </noopprocess>
+                </_x0032_>
+            </or>
+            <or_1901526028
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Validate &quot;pathToMove&quot; property (path)"
+                sling:resourceType="cq/workflow/components/model/or"
+                branches="2"
+                branchName1="&quot;pathToMove&quot; property (path) is valid"
+                branchName2="&quot;pathToMove&quot; property (path) is NOT valid"
+                branchOrder="[0,1]"
+                orSplit="true"
+                script1="function check() {&#xd;&#xa;    let pagePath = workflowData.getPayload();&#xd;&#xa;    let pageContentNodePath = pagePath + &quot;/jcr:content&quot;;&#xd;&#xa;    if (!jcrSession.nodeExists(pageContentNodePath)) {&#xd;&#xa;        log.info(&quot;jcr:content node does not exists&quot;);&#xd;&#xa;        return false;&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    let pageContent = jcrSession.getNode(pageContentNodePath);&#xd;&#xa;    if (pageContent.hasProperty(&quot;pathToMove&quot;)) {&#xd;&#xa;        let pathToMove = pageContent.getProperty(&quot;pathToMove&quot;).toString();&#xd;&#xa;        if(pathToMove == &quot;&quot;) {&#xd;&#xa;            log.info(&quot;pathToMove is empty&quot;);&#xd;&#xa;            return false;&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        let pagePathWithoutPageName = pagePath.substring(0, pagePath.lastIndexOf(&quot;/&quot;));&#xd;&#xa;        if(pathToMove == pagePathWithoutPageName) {&#xd;&#xa;            log.info(&quot;pathToMove is the same as the current page path&quot;);&#xd;&#xa;            return false;&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        if(!jcrSession.nodeExists(pathToMove)) {&#xd;&#xa;            log.info(&quot;Path '&quot; + pathToMove + &quot;' does not exist in the repository&quot;);&#xd;&#xa;            return false;&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        return true;&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    log.info(&quot;pathToMove is not present&quot;);&#xd;&#xa;    return false;&#xd;&#xa;}"
+                script2="function check() {&#xd;&#xa;    let pagePath = workflowData.getPayload();&#xd;&#xa;    let pageContentNodePath = pagePath + &quot;/jcr:content&quot;;&#xd;&#xa;    if (!jcrSession.nodeExists(pageContentNodePath)) {&#xd;&#xa;        log.info(&quot;jcr:content node does not exists&quot;);&#xd;&#xa;        return false;&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    let pageContent = jcrSession.getNode(pageContentNodePath);&#xd;&#xa;    if (pageContent.hasProperty(&quot;pathToMove&quot;)) {&#xd;&#xa;        let pathToMove = pageContent.getProperty(&quot;pathToMove&quot;).toString();&#xd;&#xa;&#xd;&#xa;        if(pathToMove == &quot;&quot;) {&#xd;&#xa;            return true;&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        let pagePathWithoutPageName = pagePath.substring(0, pagePath.lastIndexOf(&quot;/&quot;));&#xd;&#xa;        if(pathToMove == pagePathWithoutPageName) {&#xd;&#xa;            return true;&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        return !jcrSession.nodeExists(pathToMove);&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    return true;&#xd;&#xa;}">
+                <_x0031_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <process
+                        jcr:description="It moves the page to that path"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Move page by path"
+                        sling:resourceType="cq/workflow/components/model/process">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            PROCESS="com.mysite.core.workflows.steps.MovePageStep"
+                            timeoutMillis="1"/>
+                    </process>
+                </_x0031_>
+                <_x0032_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <noopprocess
+                        jcr:description="A no operation process"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="No Operation"
+                        sling:resourceType="cq/workflow/components/workflow/noopprocess">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            PROCESS="/libs/workflow/scripts/noop.ecma"
+                            PROCESS_AUTO_ADVANCE="true"/>
+                    </noopprocess>
+                </_x0032_>
+            </or_1901526028>
+        </flow>
+    </jcr:content>
+    <cq:dialog
+        jcr:primaryType="nt:unstructured"
+        jcr:title="Quick Search"
+        sling:resourceType="cq/gui/components/authoring/dialog"
+        helpPath="https://www.adobe.com/go/aem_cmp_search_v1"
+        trackingFeature="core-components:search:v1">
+        <content
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/container">
+            <items jcr:primaryType="nt:unstructured">
+                <tabs
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/tabs"
+                    maximized="{Boolean}true">
+                    <items jcr:primaryType="nt:unstructured">
+                        <properties
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Properties"
+                            sling:resourceType="granite/ui/components/coral/foundation/container"
+                            margin="{Boolean}true">
+                            <items jcr:primaryType="nt:unstructured">
+                                <columns
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
+                                    margin="{Boolean}true">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <column
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                                            <items jcr:primaryType="nt:unstructured">
+                                                <pathToMove
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="cq/gui/components/coral/common/form/pagefield"
+                                                    fieldDescription="Path where the page needs to move."
+                                                    fieldLabel="Path to move"
+                                                    name="./jcr:content/pathToMove"
+                                                    required="{Boolean}true"
+                                                    rootPath="/content"/>
+                                            </items>
+                                        </column>
+                                    </items>
+                                </columns>
+                            </items>
+                        </properties>
+                        <cq:styles
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/include"
+                            path="/mnt/overlay/cq/gui/components/authoring/dialog/style/tab_edit/styletab"/>
+                    </items>
+                </tabs>
+            </items>
+        </content>
+    </cq:dialog>
+</jcr:root>
