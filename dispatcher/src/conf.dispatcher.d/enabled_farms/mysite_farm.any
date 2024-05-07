@@ -1,0 +1,3 @@
+/farms {
+    $include "../available_farms/mysite_dispatcher.any"
+}
