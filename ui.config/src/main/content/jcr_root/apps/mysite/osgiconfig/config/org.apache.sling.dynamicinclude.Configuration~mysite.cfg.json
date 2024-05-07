@@ -1,0 +1,13 @@
+{
+  "include-filter.config.enabled": true,
+  "include-filter.config.path": "/content/mysite",
+  "include-filter.config.resource-types": [
+    "foundation/components/userinfo",
+    "mysite/components/latestnews"
+  ],
+  "include-filter.config.include-type": "SSI",
+  "include-filter.config.add_comment": true,
+  "include-filter.config.selector": "nocache",
+  "include-filter.config.required_header": "Server-Agent=Communique-Dispatcher",
+  "include-filter.config.appendSuffix": true
+}
