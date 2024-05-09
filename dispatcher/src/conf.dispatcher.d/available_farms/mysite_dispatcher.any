@@ -6,6 +6,7 @@
 	    }
 	}
 	/cache {
+	    /docroot "/private/var/www/content/mysite"
 	    /ignoreUrlParams {
 	        /0000 { /glob "cid" /type "allow" }
 	        /0001 { /glob "utm_campaign" /type "allow" }

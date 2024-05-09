@@ -40,6 +40,12 @@ PassEnv DISP_ID
 		SetEnvIfNoCase Request_URI \
 		\.(?:gif|jpe?g|png)$ no-gzip dont-vary
 	</Directory>
+	<Directory "/private/var/www/content/mysite">
+	    Options FollowSymLinks Includes
+	    AllowOverride None
+	    AddOutputFilter INCLUDES .html
+	    Require all granted
+	</Directory>
 	<IfModule disp_apache2.c>
 		# Enabled to allow rewrites to take affect and not be ignored by the dispatcher module
 		DispatcherUseProcessedURL	1
