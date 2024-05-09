@@ -1,0 +1,22 @@
+/farm {
+	/filter {
+	    /0000 {
+	        /extension "(doc|docx)"
+	        /type "deny"
+	    }
+	}
+	/cache {
+	    /ignoreUrlParams {
+	        /0000 { /glob "cid" /type "allow" }
+	        /0001 { /glob "utm_campaign" /type "allow" }
+	    }
+	    /rules {
+	        /0000 { /glob "*" /type "allow" }
+	        /0001 { /glob "*.nocache.html*" /type "deny" }
+	    }
+	    /invalidate {
+	        /0000 { /glob "*.html" /type "allow" }
+	    }
+	    /serveStaleOnError "1"
+	}
+}
