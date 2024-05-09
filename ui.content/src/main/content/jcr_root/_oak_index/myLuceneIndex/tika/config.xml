@@ -1,0 +1,11 @@
+<properties>
+    <detectors>
+        <detector class="org.apache.tika.detect.TypeDetector"/>
+    </detectors>
+    <parsers>
+        <parser class="org.apache.tika.parser.DefaultParser"> <!-- org.apache.tika.parser.EmptyParser -->
+            <mime>application/pdf</mime>
+        </parser>
+    </parsers>
+    <service-loader initializableProblemHandler="ignore" dynamic="true"/>
+</properties>

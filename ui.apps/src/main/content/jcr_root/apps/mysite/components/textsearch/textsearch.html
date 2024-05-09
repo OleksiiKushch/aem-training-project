@@ -1,0 +1,16 @@
+<sly data-sly-use.textSearch="com.mysite.core.models.TextSearch">
+    <button id="${textSearch.id @ context='text'}">Search</button>
+</sly>
+<script>
+    $(document).ready(function() {
+        $("#${textSearch.id @ context='text'}").click(function(){
+            $.ajax({
+                url: "${resource.path @ context='unsafe'}",
+                type: 'GET',
+                success: function(response) {
+                    console.log(response);
+                }
+            });
+        });
+    });
+</script>
