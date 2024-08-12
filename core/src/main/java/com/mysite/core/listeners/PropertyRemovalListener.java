@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component(
-        service = EventListener.class,
-        immediate = true
+        service = EventListener.class/*,
+        immediate = true*/
 )
 public class PropertyRemovalListener implements EventListener {
 

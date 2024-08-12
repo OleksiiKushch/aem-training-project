@@ -17,7 +17,7 @@ import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.Privilege;
 import java.util.Objects;
 
-@Component(immediate = true)
+@Component/*(immediate = true)*/
 public class ModifyPermissions {
 
     private static final String CONTENT_SITE_FR = "/content/we-retail/fr";
