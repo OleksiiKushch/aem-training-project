@@ -1,0 +1,192 @@
+"searchedText": "${textSearchModel.searchedText @ context='text'}",
+                        "paths": "${textSearchModel.searchPaths @ context='text'}",
+                        "searchStrategy": "${textSearchModel.searchStrategy @ context='text'}",
+
+<sly data-sly-use.textSearchModel="com.mysite.core.models.TextSearchModel">
+
+String searchedText = request.getParameter("searchedText");
+        String paths = request.getParameter("paths");
+        String searchStrategy = request.getParameter("searchStrategy");
+
+SELECT * 
+FROM [nt:base] AS node 
+WHERE CONTAINS(node.*, 'test') 
+AND ISDESCENDANTNODE(node, '/content')
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@Component(
+        service = {EventListener.class},
+        immediate = true
+)
+public class AutoVersioningEventListener implements EventListener {
+
+    private static final String MYSITE_PATH = "/content/mysite";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Reference
+    private SlingRepository slingRepository;
+
+    private ObservationManager observationManager;
+
+    @Activate
+    private void activate(ComponentContext componentContext) throws Exception {
+        Session session = getSlingRepository().loginService(MYSITE_SERVICE_USER, null);
+        observationManager = session.getWorkspace().getObservationManager();
+        observationManager.addEventListener(this,
+                Event.NODE_ADDED | Event.PROPERTY_ADDED,
+                MYSITE_PATH, true, null, null, false
+        );
+        log.info(ACTIVATING_THE_AUTO_VERSIONING_EVENT_LISTENER_LOG_MSG);
+    }
+
+    private void deactivate() throws Exception {
+        observationManager.removeEventListener(this);
+        log.info(DEACTIVATING_THE_AUTO_VERSIONING_EVENT_LISTENER_LOG_MSG);
+    }
+
+    @Override
+    public void onEvent(EventIterator eventIterator) {
+        while (eventIterator.hasNext()) {
+            Event event = eventIterator.nextEvent();
+            String path;
+            try {
+                path = event.getPath();
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(path);
+        }
+    }
+
+    public SlingRepository getSlingRepository() {
+        return slingRepository;
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                VersionManager versionManager;
+                                try {
+                                    versionManager = session.getWorkspace().getVersionManager();
+                                } catch (RepositoryException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                try {
+                                    versionManager.checkout(jcrContentNode.getPath());
+                                    versionManager.checkin(jcrContentNode.getPath());
+                                    session.save();
+                                } catch (RepositoryException e) {
+                                    System.out.println(e.getMessage());
+                                    throw new RuntimeException(e);
+                                }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        try (ResourceResolver resourceResolver = workflowSession.adaptTo(ResourceResolver.class)) {
+            String pagePath = workItem.getWorkflowData().getPayload().toString();
+            if (Objects.nonNull(resourceResolver)) {
+                Resource pageResource = resourceResolver.getResource(pagePath + "/jcr:content");
+                if (Objects.nonNull(pageResource)) {
+                    Node pageNode = pageResource.adaptTo(Node.class);
+                    if(Objects.nonNull(pageNode) && pageNode.hasProperty("pathToMove")) {
+                        Property pathToMoveProp = pageNode.getProperty("pathToMove");
+                        String pathToMove = pathToMoveProp.getString();
+
+
+                    }
+                }
+            }
+                    // get the node (jcr:content node of the page
+
+
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            throw new RuntimeException(exception.getMessage(), exception);
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function check() {
+    var pageContentNodePath = workflowData.getPayload().toString() + "/jcr:content";
+    if (!jcrSession.nodeExists(pageContentNodePath)) {
+        log.info("jcr:content node does not exists");
+        return false;
+    }
+
+    var pageContent = jcrSession.getNode(pageContentNodePath);
+    if (pageContent.hasProperty("pathToMove")) {
+        var pathToMove = pageContent.getProperty("pathToMove").getString();
+
+        if(pathToMove) {
+            log.info("pathToMove is empty");
+            return false;
+        }
+        
+        if(pathToMove === pagePath) {
+            log.info("pathToMove is the same as the current page path");
+            return false;
+        }
+
+        if(!jcrSession.nodeExists(pathToMove)) {
+            log.info("Path '" + pathToMove + "' does not exist in the repository");
+            return false;
+        }
+
+        return true;
+    }
+
+    log.info("pathToMove is not present");
+    return false;
+}
+
+function check() {
+    var pageContentNodePath = workflowData.getPayload().toString() + "/jcr:content";
+    if (!jcrSession.nodeExists(pageContentNodePath)) {
+        log.info("jcr:content node does not exists");
+        return false;
+    }
+
+    var pageContent = jcrSession.getNode(pageContentNodePath);
+    if (pageContent.hasProperty("pathToMove")) {
+        var pathToMove = pageContent.getProperty("pathToMove").getString();
+
+        if(pathToMove) {
+            return true;
+        }
+
+        if(pathToMove === pagePath) {
+            return true;
+        }
+
+        return !jcrSession.nodeExists(pathToMove);
+    }
+
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+try (ResourceResolver resourceResolver = workflowSession.adaptTo(ResourceResolver.class)) {
+            if (Objects.nonNull(resourceResolver)) {
+                String pagePath = workItem.getWorkflowData().getPayload().toString();
+                Resource pageResource = resourceResolver.getResource(pagePath + MySiteConstants.SLASH + JcrConstants.JCR_CONTENT);
+                if (Objects.nonNull(pageResource)) {
+                    Node pageNode = pageResource.adaptTo(Node.class);
+                    if(Objects.nonNull(pageNode) && pageNode.hasProperty(PATH_TO_MOVE_PROPERTY)) {
+                        String pathToMove = pageNode.getProperty(PATH_TO_MOVE_PROPERTY).getString();
+
+                        resourceResolver.move(pagePath, pathToMove);
+                        resourceResolver.commit();
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            throw new RuntimeException(exception.getMessage(), exception);
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
