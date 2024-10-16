@@ -2,7 +2,7 @@
   "aces": [
     "type=allow;privileges=jcr:read,jcr:write,jcr:lockManagement,jcr:versionManagement,jcr:nodeTypeManagement,jcr:retentionManagement,jcr:lifecycleManagement;path=/content/mysite"
   ],
-  "ensure-immediately": "{Boolean}true",
+  "ensure-immediately": "true",
   "principalName": "mysite/mysite-auto-versioning-service-user",
   "type": "add"
 }
